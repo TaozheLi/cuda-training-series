@@ -19,9 +19,9 @@ const int block_size = 256;  // CUDA maximum is 1024
 // vector add kernel: C = A + B
 __global__ void vadd(const float *A, const float *B, float *C, int ds){
 
-  int idx = threadIdx.x  + blockIdx.x * block_size // create typical 1D thread index from built-in variables
+  int idx = threadIdx.x  + blockIdx.x * block_size; // create typical 1D thread index from built-in variables
   if (idx < ds)
-    C[idx] = A[idx] + B[idx]         // do the vector (element) add here
+    C[idx] = A[idx] + B[idx];         // do the vector (element) add here
 }
 
 int main(){
@@ -50,7 +50,7 @@ int main(){
   cudaCheckErrors("kernel launch failure");
   //cuda processing sequence step 2 is complete
   // copy vector C from device to host:
-  cudaMemcpy(h_C, d_C, cudaMemcpyDeviceToHost);
+  cudaMemcpy(h_C, d_C, DSIZE*sizeof(float), cudaMemcpyDeviceToHost);
   //cuda processing sequence step 3 is complete
   cudaCheckErrors("kernel execution failure or cudaMemcpy H2D failure");
   printf("A[0] = %f\n", h_A[0]);
