@@ -36,7 +36,6 @@ int main(){
   cudaCheckErrors("cudaMalloc Error");
   memset(um_array, 0, ds*sizeof(um_array[0]));
   cudaMemPrefetchAsync(um_array, ds*sizeof(um_array[0]), 0);
-  cudaCheckErrors("cudaMemcpy H->D Error");
   inc<<<256, 256>>>(um_array, ds);
   cudaCheckErrors("kernel launch error");
   cudaMemPrefetchAsync(um_array, ds*sizeof(um_array[0]), cudaCpuDeviceId);
