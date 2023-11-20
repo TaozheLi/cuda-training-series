@@ -14,14 +14,12 @@
     } while (0)
 
 
-const int DSIZE = 4096;
-const int block_size = 256;  // CUDA maximum is 1024
+const int DSIZE = 32*1048576;
 // vector add kernel: C = A + B
 __global__ void vadd(const float *A, const float *B, float *C, int ds){
 
-  int idx = threadIdx.x  + blockIdx.x * block_size; // create typical 1D thread index from built-in variables
-  if (idx < ds)
-    C[idx] = A[idx] + B[idx];         // do the vector (element) add here
+  for (int idx = threadIdx.x+blockDim.x*blockIdx.x; idx < ds; idx+=gridDim.x*blockDim.x)         // a grid-stride loop
+    C[idx] = A[idx] + B[idx]; // do the vector (element) add here
 }
 
 int main(){
@@ -35,10 +33,8 @@ int main(){
     h_B[i] = rand()/(float)RAND_MAX;
     h_C[i] = 0;}
   cudaMalloc(&d_A, DSIZE*sizeof(float));  // allocate device space for vector A
-  // allocate device space for vector B
-  cudaMalloc(&d_B, DSIZE * sizeof(float));
-  // allocate device space for vector C
-  cudaMalloc(&d_C, DSIZE * sizeof(float));
+  cudaMalloc(&d_B, DSIZE*sizeof(float));  // allocate device space for vector B
+  cudaMalloc(&d_C, DSIZE*sizeof(float));  // allocate device space for vector C
   cudaCheckErrors("cudaMalloc failure"); // error checking
   // copy vector A to device:
   cudaMemcpy(d_A, h_A, DSIZE*sizeof(float), cudaMemcpyHostToDevice);
@@ -46,7 +42,9 @@ int main(){
   cudaMemcpy(d_B, h_B, DSIZE*sizeof(float), cudaMemcpyHostToDevice);
   cudaCheckErrors("cudaMemcpy H2D failure");
   //cuda processing sequence step 1 is complete
-  vadd<<<(DSIZE+block_size-1)/block_size, block_size>>>(d_A, d_B, d_C, DSIZE);
+  int blocks = 1;  // modify this line for experimentation
+  int threads = 1; // modify this line for experimentation
+  vadd<<<blocks, threads>>>(d_A, d_B, d_C, DSIZE);
   cudaCheckErrors("kernel launch failure");
   //cuda processing sequence step 2 is complete
   // copy vector C from device to host:
@@ -58,4 +56,3 @@ int main(){
   printf("C[0] = %f\n", h_C[0]);
   return 0;
 }
-  
