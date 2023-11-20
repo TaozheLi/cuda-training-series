@@ -19,7 +19,7 @@ const int block_size = 256;  // CUDA maximum is 1024
 // matrix row-sum kernel
 __global__ void row_sums(const float *A, float *sums, size_t ds){
 
-  int idx = threadIdx.x + blockIdx.x * blockDim.x// create typical 1D thread index from built-in variables
+  int idx = threadIdx.x + blockIdx.x * blockDim.x;// create typical 1D thread index from built-in variables
   if (idx < ds){
     float sum = 0.0f;
     for (size_t i = 0; i < ds; i++)
@@ -30,7 +30,7 @@ __global__ void row_sums(const float *A, float *sums, size_t ds){
 // matrix column-sum kernel
 __global__ void column_sums(const float *A, float *sums, size_t ds){
 
-  int idx =  threadIdx.x + blockIdx.x * blockDim.x// create typical 1D thread index from built-in variables
+  int idx =  threadIdx.x + blockIdx.x * blockDim.x;// create typical 1D thread index from built-in variables
   if (idx < ds){
     float sum = 0.0f;
     for (size_t i = 0; i < ds; i++)
