@@ -40,7 +40,7 @@ int main(void) {
   int *d_in, *d_out; // device copies of a, b, c
 
   // Alloc space for host copies and setup values
-  int size = (N) * sizeof(int);
+  int size = (N+2*RADIUS) * sizeof(int);
   in = (int *)malloc(size); fill_ints(in, N + 2*RADIUS);
   out = (int *)malloc(size); fill_ints(out, N + 2*RADIUS);
 
