@@ -8,7 +8,7 @@ using namespace std;
 #define BLOCK_SIZE 16
 
 __global__ void stencil_1d(int *in, int *out) {
-    __shared__ int temp[2*RADIUS + blockDim.x];
+    __shared__ int temp[2*RADIUS + BLOCK_SIZE];
     int gindex = threadIdx.x + blockIdx.x * blockDim.x;
     int lindex = threadIdx.x + RADIUS;
 
