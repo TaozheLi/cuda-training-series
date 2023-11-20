@@ -46,7 +46,9 @@ int main(){
   cudaMemcpy(d_B, h_B, DSIZE*sizeof(float), cudaMemcpyHostToDevice);
   cudaCheckErrors("cudaMemcpy H2D failure");
   //cuda processing sequence step 1 is complete
-  vadd<<<(DSIZE+block_size-1)/block_size, block_size>>>(d_A, d_B, d_C, DSIZE);
+  int blocks = 1;
+  int threads = 1;
+  vadd<<<threads, blocks>>>(d_A, d_B, d_C, DSIZE);
   cudaCheckErrors("kernel launch failure");
   //cuda processing sequence step 2 is complete
   // copy vector C from device to host:
