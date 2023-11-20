@@ -31,19 +31,19 @@ const size_t  ds = 32ULL*1024ULL*1024ULL;
 
 int main(){
 
-  int *h_array, *d_array;
-  alloc_bytes(h_array, ds*sizeof(h_array[0]));
+  int *um_array;
+  alloc_bytes(um_array, ds*sizeof(um_array[0]));
   cudaCheckErrors("cudaMalloc Error");
-  memset(h_array, 0, ds*sizeof(h_array[0]));
-  cudaMemPrefetchAsync(h_array, ds*sizeof(h_array[0]), 0);
+  memset(um_array, 0, ds*sizeof(um_array[0]));
+  cudaMemPrefetchAsync(um_array, ds*sizeof(um_array[0]), 0);
   cudaCheckErrors("cudaMemcpy H->D Error");
-  inc<<<256, 256>>>(d_array, ds);
+  inc<<<256, 256>>>(um_array, ds);
   cudaCheckErrors("kernel launch error");
-  cudaMemPrefetchAsync(h_array, ds*sizeof(h_array[0]), cudaCpuDeviceId);
+  cudaMemPrefetchAsync(um_array, ds*sizeof(um_array[0]), cudaCpuDeviceId);
   cudaDeviceSynchronize();
   cudaCheckErrors("kernel execution or cudaMemcpy D->H Error");
   for (int i = 0; i < ds; i++) 
-    if (h_array[i] != 1) {printf("mismatch at %d, was: %d, expected: %d\n", i, h_array[i], 1); return -1;}
+    if (um_array[i] != 1) {printf("mismatch at %d, was: %d, expected: %d\n", i, um_array[i], 1); return -1;}
   printf("success!\n"); 
   return 0;
 }
