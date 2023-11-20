@@ -16,7 +16,7 @@
 template <typename T>
 void alloc_bytes(T &ptr, size_t num_bytes){
 
-  ptr = (T)malloc(num_bytes);
+  cudaMallocManaged(&ptr, num_bytes);
 }
 
 __global__ void inc(int *array, size_t n){
@@ -40,7 +40,7 @@ int main(){
   cudaCheckErrors("kernel launch error");
   cudaMemPrefetchAsync(um_array, ds*sizeof(um_array[0]), cudaCpuDeviceId);
   cudaDeviceSynchronize();
-  cudaCheckErrors("kernel execution or cudaMemcpy D->H Error");
+  cudaCheckErrors("kernel execution error");
   for (int i = 0; i < ds; i++) 
     if (um_array[i] != 1) {printf("mismatch at %d, was: %d, expected: %d\n", i, um_array[i], 1); return -1;}
   printf("success!\n"); 
